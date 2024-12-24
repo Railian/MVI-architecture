@@ -1,0 +1,69 @@
+# Gradle specific
+.gradle/
+build/
+.externalNativeBuild/
+.cxx/
+
+# IntelliJ IDEA / Android Studio
+*.iml
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/modules.xml
+.idea/**/assetWizardSettings.xml
+.idea/**/navEditor.xml
+.idea/caches/
+.idea/libraries/
+.idea/codeStyles/
+.idea/vcs.xml
+.idea/sqlDataSources.xml
+.idea/dataSources/
+.idea/dataSources.ids
+.idea/shelf/
+
+# User-specific files
+.DS_Store
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Local configuration files
+local.properties
+
+# Logs
+*.log
+
+# Cache and build files
+captures/
+*.apk
+*.ap_
+*.keystore
+
+# Dependency caches
+**/build/
+**/out/
+
+# JetBrains specific
+.kotlinc/
+.kotlin/
+*.class
+*.jar
+
+# Android specific
+.idea/runConfigurations/
+*.hprof
+gen/
+bin/
+
+# Additional config files
+*.lock
+*.orig
+
+# OS-generated files
+*.tmp
+*.bak
+*.backup
+*.idea_modules/
+.vscode/

@@ -34,7 +34,14 @@ publishing {
         createLibraryPublication(
             project = project,
             artifactId = "mvi-simple",
-            description = "A lightweight Android MVI library.",
+            description = """
+                A Kotlin library that provides the AbstractMviModel implementation 
+                to seamlessly integrate MVI architecture patterns into your project.
+                
+                It is as simple as possible and requires just to provide the process 
+                fun implementation, where you will have access to the mutable state 
+                (mutable actions, etc.) through the PipelineScope.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

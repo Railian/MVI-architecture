@@ -51,7 +51,10 @@ publishing {
             project = project,
             components = arrayOf("release"),
             artifactId = "mvi-android-compose",
-            description = "A lightweight Android MVI library.",
+            description = """
+                Android Compose extensions to improve the MviModel management, 
+                simplifying the rendering of states and the collecting of actions.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

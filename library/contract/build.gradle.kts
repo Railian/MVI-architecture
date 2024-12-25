@@ -30,7 +30,10 @@ publishing {
         createLibraryPublication(
             project = project,
             artifactId = "mvi-contract",
-            description = "A lightweight Android MVI library.",
+            description = """
+                A Kotlin library that provides the contract
+                for implementing the MVI architecture pattern.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

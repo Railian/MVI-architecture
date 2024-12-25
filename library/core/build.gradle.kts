@@ -31,7 +31,10 @@ publishing {
         createLibraryPublication(
             project = project,
             artifactId = "mvi-core",
-            description = "A lightweight Android MVI library.",
+            description = """
+                A Kotlin library that provides the core interfaces 
+                for implementing the MVI architecture pattern.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

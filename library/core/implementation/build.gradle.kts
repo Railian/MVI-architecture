@@ -33,7 +33,14 @@ publishing {
         createLibraryPublication(
             project = project,
             artifactId = "mvi-core-implementation",
-            description = "A lightweight Android MVI library.",
+            description = """
+                A Kotlin library that provides the core implementation 
+                for building the MVI architecture pattern.
+                
+                Add it to your dependencies to create the custom implementation 
+                of the MVI architecture pattern or to extend the functionality 
+                of the existing implementations.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

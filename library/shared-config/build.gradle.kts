@@ -30,7 +30,13 @@ publishing {
         createLibraryPublication(
             project = project,
             artifactId = "mvi-shared-config",
-            description = "A lightweight Android MVI library.",
+            description = """
+                Glogal and Shared configuration of the MVI architecture library.
+                
+                Add it to your dependencies to create the custom implementation 
+                of the MVI architecture pattern or to extend the functionality 
+                of the existing implementations.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

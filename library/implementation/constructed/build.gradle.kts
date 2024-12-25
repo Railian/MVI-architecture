@@ -35,7 +35,16 @@ publishing {
         createLibraryPublication(
             project = project,
             artifactId = "mvi-constructed",
-            description = "A lightweight Android MVI library.",
+            description = """
+                A Kotlin library that provides the AbstractMviModel implementation 
+                to seamlessly integrate MVI architecture patterns into your project. 
+                
+                This artifact differs from `mvi-embedded` by offering a more constructed approach. 
+                It introduces an `AbstractMviModel` where the IntentProcessor, StateReducer, and
+                ActionEmitter are injecting within the model as properties. This simplifies usage
+                by handling internal state transitions and action emissions automatically, 
+                making it easier to build complex MVI interactions within your MviModels.
+            """.trimIndent().trimNewLines(),
         )
     }
 }

@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlinx.atomicfu)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.signing)
     alias(libs.plugins.dokka)
@@ -18,7 +19,9 @@ kotlin {
 }
 
 dependencies {
-    api(libs.kotlinx.coroutines.core)
+    api(projects.library.core)
+    implementation(projects.library.contract)
+    implementation(libs.kmlogging)
 }
 
 publishing {
@@ -29,7 +32,7 @@ publishing {
     publications {
         createLibraryPublication(
             project = project,
-            artifactId = "mvi-contract",
+            artifactId = "mvi-core-implementation",
             description = "A lightweight Android MVI library.",
         )
     }

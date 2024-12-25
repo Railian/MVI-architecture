@@ -1,6 +1,7 @@
 [versions]
 agp = "8.8.0-rc02"
 kotlin = "2.0.21"
+kotlin-dokka = "1.9.20"
 kotlinx-atomicfu = "0.26.1"
 kotlinx-coroutines = "1.9.0"
 androidx-lifecycle = "2.8.3"
@@ -25,3 +26,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin-dokka" }
+maven-publish = { id = "maven-publish" }
+signing = { id = "signing" }
+

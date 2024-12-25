@@ -19,6 +19,7 @@ kotlin {
 
 dependencies {
     api(libs.kotlinx.coroutines.core)
+    implementation(projects.library.contract)
 }
 
 publishing {
@@ -29,7 +30,7 @@ publishing {
     publications {
         createLibraryPublication(
             project = project,
-            artifactId = "mvi-contract",
+            artifactId = "mvi-core",
             description = "A lightweight Android MVI library.",
         )
     }

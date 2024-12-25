@@ -18,6 +18,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        mavenLocal()
         google{
             mavenContent {
                 includeGroupByRegex("com\\.android.*")
@@ -31,10 +32,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "MVI"
 include(":library:contract")
-include(":library:core:api")
-include(":library:core:impl")
-include(":library:config")
-include(":library:impl:simple")
-include(":library:impl:embedded")
-include(":library:impl:constructed")
-include(":library:compose:android")
+include(":library:core")
+include(":library:core:implementation")
+include(":library:shared-config")
+include(":library:implementation:simple")
+include(":library:implementation:embedded")
+include(":library:implementation:constructed")
+include(":library:extension:android-compose")

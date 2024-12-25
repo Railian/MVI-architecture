@@ -44,7 +44,7 @@ public abstract class BaseMviModel<STATE, INTENT>(
         if (!config.lazyInit) initializer.initAsync()
     }
 
-    public final override fun handleAsync(intent: INTENT): Job {
+    public final override fun processAsync(intent: INTENT): Job {
         if (config.lazyInit) initializer.initAsync()
         return intentProcessor.processAsync(intent)
     }

@@ -17,10 +17,10 @@ public interface MviModel<STATE, INTENT> {
     public val state: StateFlow<STATE>
 
     /**
-     * Handle an intent asynchronously.
+     * Process an intent asynchronously.
      *
-     * @param intent The intent to be handled.
-     * @return A [Job] representing the ongoing handling.
+     * @param intent The intent to be processed.
+     * @return A [Job] representing the ongoing processing.
      */
-    public fun handleAsync(intent: INTENT): Job
+    public fun processAsync(intent: INTENT): Job
 }

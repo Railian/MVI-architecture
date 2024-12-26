@@ -1,11 +1,13 @@
 package ua.railian.architecture.mvi.simple
 
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import ua.railian.architecture.mvi.MviModelWithActions
 import ua.railian.architecture.mvi.config.ActionsMviConfig
 import ua.railian.architecture.mvi.config.ActionsMviConfigEditor
@@ -30,16 +32,7 @@ public abstract class AbstractMviModelWithActions<STATE, INTENT, ACTION>(
 ) {
     override val config: MviConfig = MviConfigEditor(sharedConfig).apply(settings)
 
-    private val mviState by lazy {
-        MviMutableStateFlow(
-            initialValue = initialState,
-            onFirstCollect = {
-                if (config.lazyInit) {
-                    initializer.initAsync()
-                }
-            },
-        )
-    }
+    private val mviState = MviMutableStateFlow(initialState)
 
     private val mviActions by lazy {
         MviMutableActionFlow<ACTION>(
@@ -52,7 +45,9 @@ public abstract class AbstractMviModelWithActions<STATE, INTENT, ACTION>(
         baseInit()
     }
 
-    final override val state: StateFlow<STATE> = mviState.asStateFlow()
+    final override val state: StateFlow<STATE> = mviState
+        .onStart { if (config.lazyInit) initializer.initAsync() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, initialState)
 
     final override val actions: Flow<ACTION> = mviActions
         .onStart { if (config.lazyInit) initializer.initAsync() }

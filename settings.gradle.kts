@@ -30,7 +30,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MVI"
+rootProject.name = "MVI-architecture"
 include(":library:contract")
 include(":library:core")
 include(":library:core:implementation")

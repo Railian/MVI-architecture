@@ -21,7 +21,7 @@ public abstract class AbstractMviModel<STATE, INTENT, EFFECT>(
     protected abstract val intentProcessor: MviIntentProcessor<INTENT, STATE, EFFECT>
     protected abstract val stateReducer: MviStateReducer<EFFECT, STATE>
 
-    final override suspend fun processIntent(
+    final override fun processIntent(
         intent: INTENT,
         state: StateFlow<STATE>,
     ): Flow<EFFECT> {

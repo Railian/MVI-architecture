@@ -31,7 +31,7 @@ public abstract class AbstractMviModel<STATE, INTENT, EFFECT>(
         }
     }
 
-    protected abstract suspend fun processIntent(
+    protected abstract fun processIntent(
         intent: INTENT,
         state: StateFlow<STATE>,
     ): Flow<EFFECT>

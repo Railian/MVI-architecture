@@ -31,6 +31,7 @@
             <option value="$PROJECT_DIR$/library/implementation" />
             <option value="$PROJECT_DIR$/library/implementation/constructed" />
             <option value="$PROJECT_DIR$/library/implementation/embedded" />
+            <option value="$PROJECT_DIR$/library/implementation/mock" />
             <option value="$PROJECT_DIR$/library/implementation/simple" />
             <option value="$PROJECT_DIR$/library/shared-config" />
           </set>

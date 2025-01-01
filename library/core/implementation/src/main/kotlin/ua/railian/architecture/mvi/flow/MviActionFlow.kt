@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.receiveAsFlow
 import ua.railian.architecture.mvi.config.ActionFlowConfig
 import ua.railian.architecture.mvi.log.Category
-import ua.railian.architecture.mvi.log.MviCategoryLogger
 import ua.railian.architecture.mvi.log.MviLogger
 import ua.railian.architecture.mvi.log.MviPipelineCategoryLogger
 import ua.railian.architecture.mvi.log.MviPipelineLogger
@@ -19,23 +18,22 @@ public interface MviMutableActionFlow<ACTION> : MutableActionFlow<ACTION> {
 
 public fun <ACTION> MviMutableActionFlow(
     config: ActionFlowConfig,
-    logger: MviLogger,
+    logger: MviLogger? = null,
 ): MviMutableActionFlow<ACTION> {
-    return MviMutableActionFlowImpl(config, logger)
+    return MviMutableActionFlowImpl(config) { action ->
+        logger?.log(Warn, Category.Action) { "action $action was dropped" }
+    }
 }
 
 private class MviMutableActionFlowImpl<ACTION>(
     config: ActionFlowConfig,
-    logger: MviLogger,
-) : MviMutableActionFlow<ACTION>,
-    MviCategoryLogger by logger with Category.Action {
+    onUndelivered: (action: ACTION) -> Unit,
+) : MviMutableActionFlow<ACTION> {
 
-    private val channel = Channel<ACTION>(
+    private val channel = Channel(
         capacity = config.capacity,
         onBufferOverflow = config.onBufferOverflow,
-        onUndeliveredElement = { action ->
-            log(Warn) { "action $action was dropped" }
-        },
+        onUndeliveredElement = onUndelivered,
     )
 
     private val flow = channel.receiveAsFlow()

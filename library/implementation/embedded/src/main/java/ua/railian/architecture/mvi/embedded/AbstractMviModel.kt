@@ -11,7 +11,7 @@ import ua.railian.architecture.mvi.log.Priority.Info
 import ua.railian.architecture.mvi.log.with
 import ua.railian.architecture.mvi.simple.AbstractMviModel as SimpleAbstractMviModel
 
-public abstract class AbstractMviModel<STATE, INTENT, EFFECT>(
+public abstract class AbstractMviModel<STATE, INTENT, RESULT>(
     initialState: STATE,
     initialIntents: Flow<INTENT> = emptyFlow(),
     sharedConfig: SharedMviConfig = GlobalMviConfig,
@@ -23,10 +23,10 @@ public abstract class AbstractMviModel<STATE, INTENT, EFFECT>(
     settings = settings,
 ) {
     final override suspend fun PipelineScope.process(intent: INTENT) {
-        with(logger with Category.Effect) {
-            processIntent(intent, state).collect { effect ->
-                log(Info) { "produce effect $effect" }
-                state.update { reduxState(effect, it) }
+        with(logger with Category.Result) {
+            processIntent(intent, state).collect { result ->
+                log(Info) { "produce result $result" }
+                state.update { reduxState(result, it) }
             }
         }
     }
@@ -34,10 +34,10 @@ public abstract class AbstractMviModel<STATE, INTENT, EFFECT>(
     protected abstract fun processIntent(
         intent: INTENT,
         state: StateFlow<STATE>,
-    ): Flow<EFFECT>
+    ): Flow<RESULT>
 
     protected abstract fun reduxState(
-        effect: EFFECT,
+        result: RESULT,
         currentState: STATE,
     ): STATE
 }

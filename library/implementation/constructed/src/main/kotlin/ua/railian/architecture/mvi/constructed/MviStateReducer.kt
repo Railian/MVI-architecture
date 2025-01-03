@@ -1,5 +1,5 @@
 package ua.railian.architecture.mvi.constructed
 
-public fun interface MviStateReducer<EFFECT, STATE> {
-    public fun reduxState(effect: EFFECT, currentState: STATE): STATE
+public fun interface MviStateReducer<RESULT, STATE> {
+    public fun reduxState(result: RESULT, currentState: STATE): STATE
 }

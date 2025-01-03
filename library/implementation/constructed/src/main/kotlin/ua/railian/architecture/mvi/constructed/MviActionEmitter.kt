@@ -1,5 +1,5 @@
 package ua.railian.architecture.mvi.constructed
 
-public fun interface MviActionEmitter<EFFECT, STATE, ACTION> {
-    public fun emitAction(effect: EFFECT, currentState: STATE): ACTION?
+public fun interface MviActionEmitter<RESULT, STATE, ACTION> {
+    public fun emitAction(result: RESULT, currentState: STATE): ACTION?
 }

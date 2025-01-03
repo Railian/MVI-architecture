@@ -1,11 +1,11 @@
 package ua.railian.architecture.mvi.config
 
 public interface SharedMviConfig :
-    BaseMviConfig, ActionsMviConfig {
+    BaseMviConfig, EventsMviConfig {
 
     public interface Editor : SharedMviConfig,
         BaseMviConfig.Editor,
-        ActionsMviConfig.Editor
+        EventsMviConfig.Editor
 }
 
 public fun SharedMviConfig(
@@ -19,4 +19,4 @@ private open class SharedMviConfigEditor(
     source: SharedMviConfig,
 ) : SharedMviConfig.Editor,
     BaseMviConfig.Editor by BaseMviConfigEditor(source),
-    ActionsMviConfig.Editor by ActionsMviConfigEditor(source)
+    EventsMviConfig.Editor by EventsMviConfigEditor(source)

@@ -8,4 +8,4 @@ public object GlobalMviConfig : SharedMviConfig by GlobalMviConfigEditor {
 
 private object GlobalMviConfigEditor : SharedMviConfig.Editor,
     BaseMviConfig.Editor by BaseMviConfigEditor(),
-    ActionsMviConfig.Editor by ActionsMviConfigEditor()
+    EventsMviConfig.Editor by EventsMviConfigEditor()

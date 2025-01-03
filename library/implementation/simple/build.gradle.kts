@@ -40,7 +40,7 @@ publishing {
                 
                 It is as simple as possible and requires just to provide the process 
                 fun implementation, where you will have access to the mutable state 
-                (mutable actions, etc.) through the PipelineScope.
+                (mutable events, etc.) through the PipelineScope.
             """.trimIndent().trimNewLines(),
         )
     }

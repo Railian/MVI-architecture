@@ -41,7 +41,7 @@ publishing {
                 
                 This artifact offers an implementation where embedded intent processor 
                 produce results that can be handled by embedded state reducer or
-                embedded action emitter to redux new state or emit new actions.
+                embedded event emitter to redux new state or emit new events.
             """.trimIndent(),
         )
     }

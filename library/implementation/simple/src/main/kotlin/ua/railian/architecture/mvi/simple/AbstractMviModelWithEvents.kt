@@ -8,35 +8,35 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import ua.railian.architecture.mvi.MviModelWithActions
-import ua.railian.architecture.mvi.config.ActionsMviConfig
-import ua.railian.architecture.mvi.config.ActionsMviConfigEditor
+import ua.railian.architecture.mvi.MviModelWithEvents
+import ua.railian.architecture.mvi.config.EventsMviConfig
+import ua.railian.architecture.mvi.config.EventsMviConfigEditor
 import ua.railian.architecture.mvi.config.BaseMviConfig
 import ua.railian.architecture.mvi.config.BaseMviConfigEditor
 import ua.railian.architecture.mvi.config.GlobalMviConfig
 import ua.railian.architecture.mvi.config.SharedMviConfig
-import ua.railian.architecture.mvi.flow.MutableActionFlow
-import ua.railian.architecture.mvi.flow.MviMutableActionFlow
+import ua.railian.architecture.mvi.flow.MutableEventFlow
+import ua.railian.architecture.mvi.flow.MviMutableEventFlow
 import ua.railian.architecture.mvi.flow.MviMutableStateFlow
 import ua.railian.architecture.mvi.log.MviPipelineLogger
 import ua.railian.architecture.mvi.log.with
 import ua.railian.architecture.mvi.pipeline.PipelineId
 
-public abstract class AbstractMviModelWithActions<STATE, INTENT, ACTION>(
+public abstract class AbstractMviModelWithEvents<STATE, INTENT, EVENT>(
     initialState: STATE,
     initialIntents: Flow<INTENT> = emptyFlow(),
     sharedConfig: SharedMviConfig = GlobalMviConfig,
     settings: MviConfig.Editor.() -> Unit = {},
-) : MviModelWithActions<STATE, INTENT, ACTION>, BaseMviModel<STATE, INTENT>(
+) : MviModelWithEvents<STATE, INTENT, EVENT>, BaseMviModel<STATE, INTENT>(
     initialIntents = initialIntents,
 ) {
     override val config: MviConfig = MviConfigEditor(sharedConfig).apply(settings)
 
     private val mviState = MviMutableStateFlow(initialState)
 
-    private val mviActions by lazy {
-        MviMutableActionFlow<ACTION>(
-            config = config.actions,
+    private val mviEvents by lazy {
+        MviMutableEventFlow<EVENT>(
+            config = config.events,
             logger = logger,
         )
     }
@@ -49,15 +49,15 @@ public abstract class AbstractMviModelWithActions<STATE, INTENT, ACTION>(
         .onStart { if (config.lazyInit) initializer.initAsync() }
         .stateIn(viewModelScope, SharingStarted.Lazily, initialState)
 
-    final override val actions: Flow<ACTION> = mviActions
+    final override val events: Flow<EVENT> = mviEvents
         .onStart { if (config.lazyInit) initializer.initAsync() }
 
     //region PipelineScope
     public open inner class PipelineScope internal constructor(public val pipelineId: PipelineId) {
-        private val mviModelRef = this@AbstractMviModelWithActions
+        private val mviModelRef = this@AbstractMviModelWithEvents
         public val logger: MviPipelineLogger = mviModelRef.logger with pipelineId
         public val state: MutableStateFlow<STATE> = mviState.loggable(logger)
-        public val actions: MutableActionFlow<ACTION> = mviActions.loggable(logger)
+        public val events: MutableEventFlow<EVENT> = mviEvents.loggable(logger)
     }
 
     final override suspend fun process(pipelineId: PipelineId, intent: INTENT) {
@@ -68,14 +68,14 @@ public abstract class AbstractMviModelWithActions<STATE, INTENT, ACTION>(
     //endregion
 
     //region MviConfig
-    public interface MviConfig : BaseMviConfig, ActionsMviConfig {
+    public interface MviConfig : BaseMviConfig, EventsMviConfig {
         public interface Editor : MviConfig,
             BaseMviConfig.Editor,
-            ActionsMviConfig.Editor
+            EventsMviConfig.Editor
     }
 
     private class MviConfigEditor(source: SharedMviConfig) : MviConfig.Editor,
         BaseMviConfig.Editor by BaseMviConfigEditor(source),
-        ActionsMviConfig.Editor by ActionsMviConfigEditor(source)
+        EventsMviConfig.Editor by EventsMviConfigEditor(source)
     //endregion
 }

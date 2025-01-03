@@ -5,14 +5,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import ua.railian.architecture.mvi.config.GlobalMviConfig
 import ua.railian.architecture.mvi.config.SharedMviConfig
-import ua.railian.architecture.mvi.embedded.AbstractMviModelWithActions as AbstractMviModelWithActions
+import ua.railian.architecture.mvi.embedded.AbstractMviModelWithEvents as AbstractMviModelWithEvents
 
-public abstract class AbstractMviModelWithActions<STATE, INTENT, RESULT, ACTION>(
+public abstract class AbstractMviModelWithEvents<STATE, INTENT, RESULT, EVENT>(
     initialState: STATE,
     initialIntents: Flow<INTENT> = emptyFlow(),
     sharedConfig: SharedMviConfig = GlobalMviConfig,
     settings: MviConfig.Editor.() -> Unit = {},
-) : AbstractMviModelWithActions<STATE, INTENT, RESULT, ACTION>(
+) : AbstractMviModelWithEvents<STATE, INTENT, RESULT, EVENT>(
     initialState = initialState,
     initialIntents = initialIntents,
     sharedConfig = sharedConfig,
@@ -20,7 +20,7 @@ public abstract class AbstractMviModelWithActions<STATE, INTENT, RESULT, ACTION>
 ) {
     protected abstract val intentProcessor: MviIntentProcessor<INTENT, STATE, RESULT>
     protected abstract val stateReducer: MviStateReducer<RESULT, STATE>
-    protected abstract val actionEmitter: MviActionEmitter<RESULT, STATE, ACTION>
+    protected abstract val eventEmitter: MviEventEmitter<RESULT, STATE, EVENT>
 
     final override fun processIntent(
         intent: INTENT,
@@ -42,11 +42,11 @@ public abstract class AbstractMviModelWithActions<STATE, INTENT, RESULT, ACTION>
         )
     }
 
-    final override fun emitAction(
+    final override fun emitEvent(
         result: RESULT,
         currentState: STATE,
-    ): ACTION? {
-        return actionEmitter.emitAction(
+    ): EVENT? {
+        return eventEmitter.emitEvent(
             result = result,
             currentState = currentState,
         )

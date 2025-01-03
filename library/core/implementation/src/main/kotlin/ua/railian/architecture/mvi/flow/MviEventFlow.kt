@@ -3,7 +3,7 @@ package ua.railian.architecture.mvi.flow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.receiveAsFlow
-import ua.railian.architecture.mvi.config.ActionFlowConfig
+import ua.railian.architecture.mvi.config.EventFlowConfig
 import ua.railian.architecture.mvi.log.Category
 import ua.railian.architecture.mvi.log.MviLogger
 import ua.railian.architecture.mvi.log.MviPipelineCategoryLogger
@@ -12,23 +12,23 @@ import ua.railian.architecture.mvi.log.Priority.Info
 import ua.railian.architecture.mvi.log.Priority.Warn
 import ua.railian.architecture.mvi.log.with
 
-public interface MviMutableActionFlow<ACTION> : MutableActionFlow<ACTION> {
-    public fun loggable(logger: MviPipelineLogger): MutableActionFlow<ACTION>
+public interface MviMutableEventFlow<EVENT> : MutableEventFlow<EVENT> {
+    public fun loggable(logger: MviPipelineLogger): MutableEventFlow<EVENT>
 }
 
-public fun <ACTION> MviMutableActionFlow(
-    config: ActionFlowConfig,
+public fun <EVENT> MviMutableEventFlow(
+    config: EventFlowConfig,
     logger: MviLogger? = null,
-): MviMutableActionFlow<ACTION> {
-    return MviMutableActionFlowImpl(config) { action ->
-        logger?.log(Warn, Category.Action) { "action $action was dropped" }
+): MviMutableEventFlow<EVENT> {
+    return MviMutableEventFlowImpl(config) { event ->
+        logger?.log(Warn, Category.Event) { "event $event was dropped" }
     }
 }
 
-private class MviMutableActionFlowImpl<ACTION>(
-    config: ActionFlowConfig,
-    onUndelivered: (action: ACTION) -> Unit,
-) : MviMutableActionFlow<ACTION> {
+private class MviMutableEventFlowImpl<EVENT>(
+    config: EventFlowConfig,
+    onUndelivered: (event: EVENT) -> Unit,
+) : MviMutableEventFlow<EVENT> {
 
     private val channel = Channel(
         capacity = config.capacity,
@@ -38,37 +38,37 @@ private class MviMutableActionFlowImpl<ACTION>(
 
     private val flow = channel.receiveAsFlow()
 
-    override suspend fun send(action: ACTION) {
-        channel.send(action)
+    override suspend fun send(event: EVENT) {
+        channel.send(event)
     }
 
-    override fun trySend(action: ACTION): Boolean {
-        return channel.trySend(action).isSuccess
+    override fun trySend(event: EVENT): Boolean {
+        return channel.trySend(event).isSuccess
     }
 
-    override suspend fun collect(collector: FlowCollector<ACTION>) {
+    override suspend fun collect(collector: FlowCollector<EVENT>) {
         flow.collect(collector)
     }
 
     override fun loggable(
         logger: MviPipelineLogger,
-    ): MutableActionFlow<ACTION> {
+    ): MutableEventFlow<EVENT> {
         return Loggable(logger)
     }
 
     inner class Loggable(
         logger: MviPipelineLogger,
-    ) : MutableActionFlow<ACTION> by this,
-        MviPipelineCategoryLogger by logger with Category.Action {
+    ) : MutableEventFlow<EVENT> by this,
+        MviPipelineCategoryLogger by logger with Category.Event {
 
-        override suspend fun send(action: ACTION) {
-            log(Info) { "send action $action" }
-            channel.send(action)
-            log(Info) { "action $action was sent" }
+        override suspend fun send(event: EVENT) {
+            log(Info) { "send event $event" }
+            channel.send(event)
+            log(Info) { "event $event was sent" }
         }
 
-        override fun trySend(action: ACTION): Boolean {
-            val result = channel.trySend(action)
+        override fun trySend(event: EVENT): Boolean {
+            val result = channel.trySend(event)
             log(if (result.isSuccess) Info else Warn) {
                 val formattedResult = when {
                     result.isSuccess -> "success"
@@ -76,7 +76,7 @@ private class MviMutableActionFlowImpl<ACTION>(
                     result.isClosed -> "closed"
                     else -> "unknown"
                 }
-                "try send action $action ($formattedResult)"
+                "try send event $event ($formattedResult)"
             }
             return result.isSuccess
         }

@@ -7,24 +7,24 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.withContext
-import ua.railian.architecture.mvi.ActionsHolder
+import ua.railian.architecture.mvi.EventsHolder
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
 @Suppress("ComposableNaming")
-public inline fun <reified ACTION> ActionsHolder<ACTION>.collectMviActions(
+public inline fun <reified EVENT> EventsHolder<EVENT>.collectMviEvents(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     context: CoroutineContext = EmptyCoroutineContext,
-    crossinline onEach: suspend (action: ACTION) -> Unit
+    crossinline onEach: suspend (event: EVENT) -> Unit
 ) {
     LaunchedEffect(this, lifecycleOwner, minActiveState, context) {
         lifecycleOwner.repeatOnLifecycle(minActiveState) {
             if (context == EmptyCoroutineContext) {
-                actions.collect { onEach(it) }
+                events.collect { onEach(it) }
             } else withContext(context) {
-                actions.collect { onEach(it) }
+                events.collect { onEach(it) }
             }
         }
     }

@@ -3,41 +3,41 @@ package ua.railian.architecture.mvi.config
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 
-public interface ActionsMviConfig {
-    public val actions: ActionFlowConfig
+public interface EventsMviConfig {
+    public val events: EventFlowConfig
 
-    public interface Editor : ActionsMviConfig {
-        override var actions: ActionFlowConfig
+    public interface Editor : EventsMviConfig {
+        override var events: EventFlowConfig
     }
 }
 
 /**
- * Configuration for ActionFlow which controls how actions are buffered and processed.
+ * Configuration for EventFlow which controls how events are buffered and processed.
  */
-public sealed class ActionFlowConfig(
+public sealed class EventFlowConfig(
     public open val capacity: Int = Channel.RENDEZVOUS,
     public open val onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
 ) {
 
     /**
-     * A configuration with no buffer. Each action is processed immediately, and if there's a backpressure,
+     * A configuration with no buffer. Each event is processed immediately, and if there's a backpressure,
      * the producer will suspend until the consumer is ready.
      */
-    public data object Rendezvous : ActionFlowConfig()
+    public data object Rendezvous : EventFlowConfig()
 
     /**
-     * A configuration that allows unlimited buffering of actions.
-     * Actions are never dropped, and backpressure is not applied.
+     * A configuration that allows unlimited buffering of events.
+     * Events are never dropped, and backpressure is not applied.
      */
-    public data object Unlimited : ActionFlowConfig(
+    public data object Unlimited : EventFlowConfig(
         capacity = Channel.UNLIMITED,
     )
 
     /**
-     * A configuration where only the most recent action is retained.
-     * Any previous actions in the buffer are overwritten.
+     * A configuration where only the most recent event is retained.
+     * Any previous events in the buffer are overwritten.
      */
-    public data object Conflated : ActionFlowConfig(
+    public data object Conflated : EventFlowConfig(
         capacity = Channel.CONFLATED,
     )
 
@@ -51,7 +51,7 @@ public sealed class ActionFlowConfig(
     public data class Buffered(
         override val capacity: Int = Channel.BUFFERED,
         override val onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
-    ) : ActionFlowConfig(
+    ) : EventFlowConfig(
         capacity = capacity,
         onBufferOverflow = onBufferOverflow,
     )

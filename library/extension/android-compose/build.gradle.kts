@@ -53,7 +53,7 @@ publishing {
             artifactId = "mvi-android-compose",
             description = """
                 Android Compose extensions to improve the MviModel management, 
-                simplifying the rendering of states and the collecting of actions.
+                simplifying the rendering of states and the collecting of events.
             """.trimIndent().trimNewLines(),
         )
     }

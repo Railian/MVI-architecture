@@ -1,11 +1,11 @@
 package ua.railian.architecture.mvi.config
 
-private object ActionsMviConfigDefaults : ActionsMviConfig {
-    override val actions: ActionFlowConfig = ActionFlowConfig.Unlimited
+private object EventsMviConfigDefaults : EventsMviConfig {
+    override val events: EventFlowConfig = EventFlowConfig.Unlimited
 }
 
-public class ActionsMviConfigEditor(
-    source: ActionsMviConfig = ActionsMviConfigDefaults,
-) : ActionsMviConfig.Editor {
-    override var actions: ActionFlowConfig = source.actions
+public class EventsMviConfigEditor(
+    source: EventsMviConfig = EventsMviConfigDefaults,
+) : EventsMviConfig.Editor {
+    override var events: EventFlowConfig = source.events
 }

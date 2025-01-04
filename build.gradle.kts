@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "io.github.railian.mvi"
-    version = "0.0.1".snapshot
+    version = "0.0.2".snapshot
 }
 
 private val String.snapshot get() = "$this-SNAPSHOT"

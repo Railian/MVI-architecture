@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "ua.railian.archutecture.mvi.koin.compose"
+    namespace = "ua.railian.mvi.koin.compose"
     compileSdk = 35
 
     defaultConfig {

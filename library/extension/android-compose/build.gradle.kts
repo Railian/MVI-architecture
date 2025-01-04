@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "ua.railian.architecture.mvi.compose"
+    namespace = "ua.railian.mvi.compose"
     compileSdk = 35
 
     defaultConfig {

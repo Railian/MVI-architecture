@@ -9,14 +9,14 @@ import ua.railian.architecture.mvi.config.SharedMviConfig
 import ua.railian.architecture.mvi.log.Category
 import ua.railian.architecture.mvi.log.Priority.Info
 import ua.railian.architecture.mvi.log.with
-import ua.railian.architecture.mvi.simple.AbstractMviModel as SimpleAbstractMviModel
+import ua.railian.architecture.mvi.simple.MviViewModelWithEvents as SimpleMviViewModelWithEvents
 
-public abstract class AbstractMviModel<STATE, INTENT, RESULT>(
+public abstract class MviViewModelWithEvents<STATE, INTENT, RESULT, EVENT>(
     initialState: STATE,
     initialIntents: Flow<INTENT> = emptyFlow(),
     sharedConfig: SharedMviConfig = GlobalMviConfig,
     settings: MviConfig.Editor.() -> Unit = {},
-) : SimpleAbstractMviModel<STATE, INTENT>(
+) : SimpleMviViewModelWithEvents<STATE, INTENT, EVENT>(
     initialState = initialState,
     initialIntents = initialIntents,
     sharedConfig = sharedConfig,
@@ -25,8 +25,10 @@ public abstract class AbstractMviModel<STATE, INTENT, RESULT>(
     final override suspend fun PipelineScope.process(intent: INTENT) {
         with(logger with Category.Result) {
             processIntent(intent, state).collect { result ->
-                log(Info) { "produce result $result" }
+                log(Info) { "produce result: $result" }
                 state.update { reduxState(result, it) }
+                emitEvent(result, state.value)
+                    ?.let { event -> events.send(event) }
             }
         }
     }
@@ -40,4 +42,9 @@ public abstract class AbstractMviModel<STATE, INTENT, RESULT>(
         result: RESULT,
         currentState: STATE,
     ): STATE
+
+    protected abstract fun emitEvent(
+        result: RESULT,
+        currentState: STATE,
+    ): EVENT?
 }

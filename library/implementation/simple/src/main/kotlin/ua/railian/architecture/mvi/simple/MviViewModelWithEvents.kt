@@ -22,12 +22,12 @@ import ua.railian.architecture.mvi.log.MviPipelineLogger
 import ua.railian.architecture.mvi.log.with
 import ua.railian.architecture.mvi.pipeline.PipelineId
 
-public abstract class AbstractMviModelWithEvents<STATE, INTENT, EVENT>(
+public abstract class MviViewModelWithEvents<STATE, INTENT, EVENT>(
     initialState: STATE,
     initialIntents: Flow<INTENT> = emptyFlow(),
     sharedConfig: SharedMviConfig = GlobalMviConfig,
     settings: MviConfig.Editor.() -> Unit = {},
-) : MviModelWithEvents<STATE, INTENT, EVENT>, BaseMviModel<STATE, INTENT>(
+) : MviModelWithEvents<STATE, INTENT, EVENT>, BaseMviViewModel<STATE, INTENT>(
     initialIntents = initialIntents,
 ) {
     override val config: MviConfig = MviConfigEditor(sharedConfig).apply(settings)
@@ -54,7 +54,7 @@ public abstract class AbstractMviModelWithEvents<STATE, INTENT, EVENT>(
 
     //region PipelineScope
     public open inner class PipelineScope internal constructor(public val pipelineId: PipelineId) {
-        private val mviModelRef = this@AbstractMviModelWithEvents
+        private val mviModelRef = this@MviViewModelWithEvents
         public val logger: MviPipelineLogger = mviModelRef.logger with pipelineId
         public val state: MutableStateFlow<STATE> = mviState.loggable(logger)
         public val events: MutableEventFlow<EVENT> = mviEvents.loggable(logger)

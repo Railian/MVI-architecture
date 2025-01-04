@@ -10,7 +10,7 @@ import ua.railian.architecture.mvi.config.BaseMviConfig
 import ua.railian.architecture.mvi.log.MviLogger
 import ua.railian.architecture.mvi.pipeline.PipelineId
 
-public abstract class BaseMviModel<STATE, INTENT>(
+public abstract class BaseMviViewModel<STATE, INTENT>(
     initialIntents: Flow<INTENT> = emptyFlow(),
 ) : MviModel<STATE, INTENT>, ViewModel() {
 

@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
-public inline fun <reified STATE> MviModel<STATE, *>.renderMviState(
+public inline fun <reified STATE> MviModel<STATE, *>.renderState(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     context: CoroutineContext = EmptyCoroutineContext,

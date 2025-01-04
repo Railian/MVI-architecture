@@ -17,7 +17,7 @@ public inline fun <reified EVENT> EventsHolder<EVENT>.collectMviEvents(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     context: CoroutineContext = EmptyCoroutineContext,
-    crossinline onEach: suspend (event: EVENT) -> Unit
+    crossinline onEach: suspend (event: EVENT) -> Unit,
 ) {
     LaunchedEffect(this, lifecycleOwner, minActiveState, context) {
         lifecycleOwner.repeatOnLifecycle(minActiveState) {

@@ -28,6 +28,7 @@
             <option value="$PROJECT_DIR$/library/core/implementation" />
             <option value="$PROJECT_DIR$/library/extension" />
             <option value="$PROJECT_DIR$/library/extension/android-compose" />
+            <option value="$PROJECT_DIR$/library/extension/koin-android-compose" />
             <option value="$PROJECT_DIR$/library/implementation" />
             <option value="$PROJECT_DIR$/library/implementation/constructed" />
             <option value="$PROJECT_DIR$/library/implementation/embedded" />

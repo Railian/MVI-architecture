@@ -13,7 +13,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
 @Suppress("ComposableNaming")
-public inline fun <reified EVENT> EventsHolder<EVENT>.collectMviEvents(
+public inline fun <reified EVENT> EventsHolder<EVENT>.collectEvents(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     context: CoroutineContext = EmptyCoroutineContext,

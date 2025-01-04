@@ -29,13 +29,6 @@ public inline fun <reified T> Module.mviViewModel(
     return viewModel(qualifier, definition)
 }
 
-public inline fun <reified T : MviModel<*, *>> Module.mviModel(
-    qualifier: Qualifier? = null,
-    noinline definition: Definition<T>,
-): KoinDefinition<T> {
-    return factory(qualifier, definition)
-}
-
 @OptIn(KoinInternalApi::class)
 @Composable
 public inline fun <reified T : MviModel<*, *>> koinMviModel(

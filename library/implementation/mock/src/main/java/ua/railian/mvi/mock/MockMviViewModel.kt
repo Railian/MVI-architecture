@@ -1,5 +1,7 @@
 package ua.railian.mvi.mock
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,26 +10,26 @@ import kotlinx.coroutines.launch
 import ua.railian.mvi.MviModel
 import ua.railian.mvi.queue.QueueDispatcher
 
-public typealias MockMviModelProcessor<STATE, INTENT> =
-        suspend MockMviModel<STATE, INTENT>.PipelineScope.(intent: INTENT) -> Unit
+public typealias MockMviViewModelProcessor<STATE, INTENT> =
+        suspend MockMviViewModel<STATE, INTENT>.ProcessorScope.(intent: INTENT) -> Unit
 
-public open class MockMviModel<STATE, INTENT>(
+public open class MockMviViewModel<STATE, INTENT>(
     initialState: STATE,
-    protected val mviModelScope: CoroutineScope = createMockMviModelScope(),
-    private val intentProcessor: MockMviModelProcessor<STATE, INTENT>? = null,
-) : MviModel<STATE, INTENT> {
+    viewModelScope: CoroutineScope = createMockMviViewModelScope(),
+    private val intentProcessor: MockMviViewModelProcessor<STATE, INTENT>? = null,
+) : MviModel<STATE, INTENT>, ViewModel(viewModelScope) {
 
     private val _state = MutableStateFlow(initialState)
     final override val state: StateFlow<STATE> = _state
 
     final override fun processAsync(intent: INTENT): Job {
         intentProcessor ?: return Job().apply { complete() }
-        return mviModelScope.launch {
-            intentProcessor.invoke(PipelineScope(), intent)
+        return viewModelScope.launch {
+            intentProcessor.invoke(ProcessorScope(), intent)
         }
     }
 
-    public inner class PipelineScope {
+    public inner class ProcessorScope {
         public val state: MutableStateFlow<STATE> = _state
         public val queueDispatcher: QueueDispatcher<Any> = QueueDispatcher()
     }

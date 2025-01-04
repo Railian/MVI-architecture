@@ -4,6 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlin.coroutines.EmptyCoroutineContext
 
-internal fun createMockMviModelScope(): CoroutineScope {
+internal fun createMockMviViewModelScope(): CoroutineScope {
     return CoroutineScope(context = EmptyCoroutineContext + SupervisorJob())
 }

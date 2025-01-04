@@ -1,5 +1,7 @@
 package ua.railian.mvi.mock
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -12,14 +14,14 @@ import ua.railian.mvi.flow.MutableEventFlow
 import ua.railian.mvi.flow.MviMutableEventFlow
 import ua.railian.mvi.queue.QueueDispatcher
 
-public typealias MockMviModelWithEventsProcessor<STATE, INTENT, EVENT> =
-        suspend MockMviModelWithEvents<STATE, INTENT, EVENT>.PipelineScope.(intent: INTENT) -> Unit
+public typealias MockMviViewModelWithEventsProcessor<STATE, INTENT, EVENT> =
+        suspend MockMviViewModelWithEvents<STATE, INTENT, EVENT>.ProcessorScope.(intent: INTENT) -> Unit
 
-public open class MockMviModelWithEvents<STATE, INTENT, EVENT>(
+public open class MockMviViewModelWithEvents<STATE, INTENT, EVENT>(
     initialState: STATE,
-    protected val coroutineScope: CoroutineScope = createMockMviModelScope(),
-    private val intentProcessor: MockMviModelWithEventsProcessor<STATE, INTENT, EVENT>? = null,
-) : MviModelWithEvents<STATE, INTENT, EVENT> {
+    viewModelScope: CoroutineScope = createMockMviViewModelScope(),
+    private val intentProcessor: MockMviViewModelWithEventsProcessor<STATE, INTENT, EVENT>? = null,
+) : MviModelWithEvents<STATE, INTENT, EVENT>, ViewModel(viewModelScope) {
 
     private val _state = MutableStateFlow(initialState)
     final override val state: StateFlow<STATE> = _state
@@ -29,12 +31,12 @@ public open class MockMviModelWithEvents<STATE, INTENT, EVENT>(
 
     final override fun processAsync(intent: INTENT): Job {
         intentProcessor ?: return Job().apply { complete() }
-        return coroutineScope.launch {
-            intentProcessor.invoke(PipelineScope(), intent)
+        return viewModelScope.launch {
+            intentProcessor.invoke(ProcessorScope(), intent)
         }
     }
 
-    public inner class PipelineScope {
+    public inner class ProcessorScope {
         public val state: MutableStateFlow<STATE> = _state
         public val events: MutableEventFlow<EVENT> = _events
         public val queueDispatcher: QueueDispatcher<Any> = QueueDispatcher()

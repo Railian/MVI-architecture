@@ -1,8 +1,6 @@
 package ua.railian.mvi.koin.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -17,7 +15,6 @@ import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
 import org.koin.viewmodel.defaultExtras
-import org.koin.viewmodel.factory.AndroidParametersHolder
 import org.koin.viewmodel.resolveViewModel
 import ua.railian.mvi.MviModel
 import kotlin.reflect.KClass
@@ -31,7 +28,7 @@ public inline fun <reified T> Module.mviViewModel(
 
 @OptIn(KoinInternalApi::class)
 @Composable
-public inline fun <reified T : MviModel<*, *>> koinMviModel(
+public inline fun <reified T : MviModel<*, *>> koinMviViewModel(
     qualifier: Qualifier? = null,
     viewModelStoreOwner: ViewModelStoreOwner = LocalViewModelStoreOwner.current
         ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
@@ -40,27 +37,14 @@ public inline fun <reified T : MviModel<*, *>> koinMviModel(
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
 ): T {
-    if (LocalInspectionMode.current) {
-        return remember(qualifier, extras, parameters) {
-            scope.getWithParameters(
-                clazz = T::class,
-                qualifier = qualifier,
-                parameters = AndroidParametersHolder(
-                    initialValues = parameters,
-                    extras = extras,
-                ),
-            )
-        }
-    } else {
-        @Suppress("UNCHECKED_CAST")
-        return resolveViewModel(
-            vmClass = T::class as KClass<ViewModel>,
-            viewModelStore = viewModelStoreOwner.viewModelStore,
-            key = key,
-            extras = extras,
-            qualifier = qualifier,
-            scope = scope,
-            parameters = parameters,
-        ) as T
-    }
+    @Suppress("UNCHECKED_CAST")
+    return resolveViewModel(
+        vmClass = T::class as KClass<ViewModel>,
+        viewModelStore = viewModelStoreOwner.viewModelStore,
+        key = key,
+        extras = extras,
+        qualifier = qualifier,
+        scope = scope,
+        parameters = parameters,
+    ) as T
 }

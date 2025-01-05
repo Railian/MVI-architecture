@@ -23,6 +23,10 @@ dependencies {
     api(projects.library.sharedConfig)
     api(libs.androidx.lifecycle.viewmodel)
     implementation(projects.library.core.implementation)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 publishing {

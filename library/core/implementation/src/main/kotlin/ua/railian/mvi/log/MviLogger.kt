@@ -1,12 +1,12 @@
 package ua.railian.mvi.log
 
-import ua.railian.mvi.MviModel
 import ua.railian.mvi.config.LoggerMviConfig
 import ua.railian.mvi.pipeline.PipelineId
+import kotlin.reflect.KClass
 
 private class MviLoggerImpl(
     private val config: LoggerMviConfig,
-    private val modelRef: MviModel<*, *>,
+    private val mviModelClass: KClass<*>,
 ) : MviLogger {
 
     override fun log(
@@ -19,7 +19,7 @@ private class MviLoggerImpl(
         if (category !in config.categories) return
         if (pipelineId?.let(config.filter) == false) return
         config.outputs.forEach { output ->
-            output.invoke(config.tag(modelRef), priority) {
+            output.invoke(config.tag(mviModelClass), priority) {
                 buildString {
                     pipelineId?.let { append("${it}: ") }
                     append(message())
@@ -70,8 +70,8 @@ private class MviPipelineCategoryLoggerImpl(
 
 public fun MviLogger(
     config: LoggerMviConfig,
-    modelRef: MviModel<*, *>,
-): MviLogger = MviLoggerImpl(config, modelRef)
+    mviModelClass: KClass<*>,
+): MviLogger = MviLoggerImpl(config, mviModelClass)
 
 public infix fun MviLogger.with(category: Category): MviCategoryLogger {
     return MviCategoryLoggerImpl(this, category)

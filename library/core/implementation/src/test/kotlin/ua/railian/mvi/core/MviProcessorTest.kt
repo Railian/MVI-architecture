@@ -1,4 +1,4 @@
-package ua.railian.mvi.simple
+package ua.railian.mvi.core
 
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -44,7 +44,7 @@ class MviProcessorTest {
                 pipelineId = mockPipelineId,
                 message = match { it().contains("process intent TestIntent") }
             )
-            mockProcessFunction.invoke(mockPipelineId, "TestIntent")
+            mockProcessFunction.invoke(any(), "TestIntent")
             mockLogger.log(
                 priority = Priority.Info,
                 category = Category.Intent,
@@ -83,7 +83,7 @@ class MviProcessorTest {
                 pipelineId = mockPipelineId,
                 message = match { it().contains("process intent TestIntent") }
             )
-            mockProcessFunction.invoke(mockPipelineId, "TestIntent")
+            mockProcessFunction.invoke(any(), "TestIntent")
             mockLogger.log(
                 priority = Priority.Info,
                 category = Category.Intent,
@@ -122,7 +122,7 @@ class MviProcessorTest {
                 pipelineId = mockPipelineId,
                 message = match { it().contains("process intent CancelledIntent") },
             )
-            mockProcessFunction.invoke(mockPipelineId, "CancelledIntent")
+            mockProcessFunction.invoke(any(), "CancelledIntent")
             mockLogger.log(
                 priority = Priority.Warn,
                 category = Category.Intent,
@@ -161,7 +161,7 @@ class MviProcessorTest {
                 pipelineId = mockPipelineId,
                 message = match { it().contains("process intent FaultyIntent") },
             )
-            mockProcessFunction.invoke(mockPipelineId, "FaultyIntent")
+            mockProcessFunction.invoke(any(), "FaultyIntent")
             mockLogger.log(
                 priority = Priority.Error,
                 category = Category.Intent,

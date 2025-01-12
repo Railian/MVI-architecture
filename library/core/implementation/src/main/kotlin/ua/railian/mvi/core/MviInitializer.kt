@@ -1,4 +1,4 @@
-package ua.railian.mvi.simple
+package ua.railian.mvi.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -35,7 +35,7 @@ internal class MviInitializer<INTENT>(
      * @return A [Job] representing the initialization task.
      */
     internal fun initAsync(): Job {
-        if (initialized) return completedJob
+        if (initialized) return Job().apply { complete() }
         return viewModelScope.launch {
             mutex.withLock {
                 if (initialized) return@launch

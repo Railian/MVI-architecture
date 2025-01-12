@@ -22,8 +22,7 @@ dependencies {
     api(projects.library.core)
     api(projects.library.sharedConfig)
     api(libs.androidx.lifecycle.viewmodel)
-    implementation(projects.library.implementation.simple)
-    implementation(projects.library.implementation.embedded)
+    implementation(projects.library.core.implementation)
 }
 
 publishing {

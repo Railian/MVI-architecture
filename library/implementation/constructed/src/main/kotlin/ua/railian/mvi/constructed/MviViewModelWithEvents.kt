@@ -1,54 +1,78 @@
 package ua.railian.mvi.constructed
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.update
+import ua.railian.mvi.MviModelWithEvents
+import ua.railian.mvi.config.BaseMviConfig
+import ua.railian.mvi.config.BaseMviConfigEditor
+import ua.railian.mvi.config.EventsMviConfig
+import ua.railian.mvi.config.EventsMviConfigEditor
 import ua.railian.mvi.config.GlobalMviConfig
 import ua.railian.mvi.config.SharedMviConfig
-import ua.railian.mvi.embedded.MviViewModelWithEvents as EmbeddedMviViewModelWithEvents
+import ua.railian.mvi.core.mviCore
+import ua.railian.mvi.flow.MviMutableEventFlow
+import ua.railian.mvi.flow.MviMutableStateFlow
+import ua.railian.mvi.log.Category
+import ua.railian.mvi.log.MviPipelineLogger
+import ua.railian.mvi.log.Priority.Info
 
 public abstract class MviViewModelWithEvents<STATE, INTENT, RESULT, EVENT>(
     initialState: STATE,
     initialIntents: Flow<INTENT> = emptyFlow(),
     sharedConfig: SharedMviConfig = GlobalMviConfig,
     settings: MviConfig.Editor.() -> Unit = {},
-) : EmbeddedMviViewModelWithEvents<STATE, INTENT, RESULT, EVENT>(
-    initialState = initialState,
-    initialIntents = initialIntents,
-    sharedConfig = sharedConfig,
-    settings = settings,
-) {
+) : MviModelWithEvents<STATE, INTENT, EVENT>, ViewModel() {
+
+    protected val config: MviConfig =
+        MviConfigEditor(sharedConfig).apply(settings)
+
+    private val core by mviCore(
+        config = config,
+        initialIntents = initialIntents,
+        viewModelScope = viewModelScope,
+        process = { intent -> process(intent) },
+    )
+
+    private val mviState = MviMutableStateFlow(initialState)
+    final override val state: StateFlow<STATE> =
+        core.prepareState(mviState, initialState)
+
+    private val mviEvents = MviMutableEventFlow<EVENT>(config.events, core.logger)
+    final override val events: Flow<EVENT> = core.prepareEvents(mviEvents)
+
+    //region process intent
+    final override fun processAsync(intent: INTENT): Job = core.processAsync(intent)
+
+    private suspend fun MviPipelineLogger.process(intent: INTENT) {
+        val state = mviState.loggable(this)
+        val events = mviEvents.loggable(this)
+        intentProcessor.processIntent(intent, state).collect { result ->
+            log(Info, Category.Result) { "produce result $result" }
+            state.update { stateReducer.reduxState(result, it) }
+            eventEmitter.emitEvent(result, state.value)
+                ?.let { event -> events.send(event) }
+        }
+    }
+    //endregion
+
     protected abstract val intentProcessor: MviIntentProcessor<INTENT, STATE, RESULT>
     protected abstract val stateReducer: MviStateReducer<RESULT, STATE>
     protected abstract val eventEmitter: MviEventEmitter<RESULT, STATE, EVENT>
 
-    final override fun processIntent(
-        intent: INTENT,
-        state: StateFlow<STATE>,
-    ): Flow<RESULT> {
-        return intentProcessor.processIntent(
-            intent = intent,
-            state = state,
-        )
+    //region MviConfig
+    public interface MviConfig : BaseMviConfig, EventsMviConfig {
+        public interface Editor : MviConfig,
+            BaseMviConfig.Editor,
+            EventsMviConfig.Editor
     }
 
-    final override fun reduxState(
-        result: RESULT,
-        currentState: STATE,
-    ): STATE {
-        return stateReducer.reduxState(
-            result = result,
-            currentState = currentState,
-        )
-    }
-
-    final override fun emitEvent(
-        result: RESULT,
-        currentState: STATE,
-    ): EVENT? {
-        return eventEmitter.emitEvent(
-            result = result,
-            currentState = currentState,
-        )
-    }
+    private class MviConfigEditor(source: SharedMviConfig) : MviConfig.Editor,
+        BaseMviConfig.Editor by BaseMviConfigEditor(source),
+        EventsMviConfig.Editor by EventsMviConfigEditor(source)
+    //endregion
 }

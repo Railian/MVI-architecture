@@ -1,4 +1,4 @@
-package ua.railian.mvi.simple
+package ua.railian.mvi.core
 
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder

@@ -20,7 +20,7 @@ kotlin {
 dependencies {
     api(projects.library.contract)
     api(projects.library.core)
-    implementation(libs.androidx.lifecycle.viewmodel)
+    api(libs.androidx.lifecycle.viewmodel)
     implementation(projects.library.core.implementation)
 }
 

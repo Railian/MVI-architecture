@@ -1,4 +1,4 @@
-package ua.railian.mvi.simple
+package ua.railian.mvi.core
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ua.railian.mvi.log.Category
 import ua.railian.mvi.log.MviLogger
+import ua.railian.mvi.log.MviPipelineLogger
 import ua.railian.mvi.log.Priority.Error
 import ua.railian.mvi.log.Priority.Info
 import ua.railian.mvi.log.Priority.Warn
@@ -31,19 +32,19 @@ import kotlin.time.measureTime
 internal class MviProcessor<INTENT>(
     private val viewModelScope: CoroutineScope,
     private val pipelineIdGenerator: PipelineIdGenerator,
-    private val process: suspend (pipelineId: PipelineId, intent: INTENT) -> Unit,
+    private val process: suspend MviPipelineLogger.(intent: INTENT) -> Unit,
     logger: MviLogger,
 ) {
     private val categoryLogger = logger with Category.Intent
 
     internal suspend fun process(intent: INTENT, initial: Boolean = false) {
-        with(categoryLogger with pipelineIdGenerator.next()) {
+        (categoryLogger with pipelineIdGenerator.next()).run {
             val intentDescriptor = if (initial) "initial intent" else "intent"
             log(Info) { "process $intentDescriptor $intent" }
             val duration = measureTime(
                 onCancelled = { log(Warn) { "$intentDescriptor $intent was cancelled" } },
                 onFailed = { log(Error) { "$intentDescriptor $intent failed with $it" } },
-                block = { process(pipelineId, intent) },
+                block = { this.process(intent) },
             )
             log(Info) { "$intentDescriptor $intent was processed in $duration" }
         }

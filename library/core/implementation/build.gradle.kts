@@ -22,6 +22,9 @@ dependencies {
     api(projects.library.core)
     implementation(projects.library.contract)
     implementation(libs.kmlogging)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 publishing {

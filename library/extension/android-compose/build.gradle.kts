@@ -14,7 +14,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 21
     }
 
     compileOptions {
@@ -52,7 +52,7 @@ publishing {
             components = arrayOf("release"),
             artifactId = "mvi-android-compose",
             description = """
-                Android Compose extensions to improve the MviModel management, 
+                Android Compose extensions to improve the MviModel management,
                 simplifying the rendering of states and the collecting of events.
             """.trimIndent().trimNewLines(),
         )

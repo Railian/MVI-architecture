@@ -20,8 +20,9 @@ public sealed class EventFlowConfig(
 ) {
 
     /**
-     * A configuration with no buffer. Each event is processed immediately, and if there's a backpressure,
-     * the producer will suspend until the consumer is ready.
+     * A configuration with no buffer. Each event is processed
+     * immediately, and if there's a backpressure, the producer
+     * will suspend until the consumer is ready.
      */
     public data object Rendezvous : EventFlowConfig()
 
@@ -46,7 +47,8 @@ public sealed class EventFlowConfig(
      * If the buffer overflows, the specified [onBufferOverflow] strategy is applied.
      *
      * @property capacity The size of the buffer. Default is [Channel.BUFFERED].
-     * @property onBufferOverflow Strategy to apply when the buffer overflows. Default is [BufferOverflow.SUSPEND].
+     * @property onBufferOverflow Strategy to apply when the buffer overflows.
+     * Default is [BufferOverflow.SUSPEND].
      */
     public data class Buffered(
         override val capacity: Int = Channel.BUFFERED,

@@ -14,6 +14,7 @@ import ua.railian.mvi.log.MviLogger
 import ua.railian.mvi.log.MviPipelineLogger
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 public fun <INTENT> mviCore(
     config: BaseMviConfig,
@@ -21,14 +22,41 @@ public fun <INTENT> mviCore(
     initialIntents: Flow<INTENT> = emptyFlow(),
     process: suspend MviPipelineLogger.(intent: INTENT) -> Unit,
 ): ReadOnlyProperty<MviModel<*, *>, MviCore<INTENT>> {
-    return ReadOnlyProperty { thisRef, _ ->
-        MviCore(
+    return MviCoreDelegate(
+        config = config,
+        viewModelScope = viewModelScope,
+        initialIntents = initialIntents,
+        process = process,
+    )
+}
+
+private class MviCoreDelegate<INTENT>(
+    private val config: BaseMviConfig,
+    private val viewModelScope: CoroutineScope,
+    private val initialIntents: Flow<INTENT> = emptyFlow(),
+    private val process: suspend MviPipelineLogger.(intent: INTENT) -> Unit
+) : ReadOnlyProperty<MviModel<*, *>, MviCore<INTENT>> {
+
+    private lateinit var mviCore: MviCore<INTENT>
+
+    private fun initMviCore(thisRef: MviModel<*, *>) {
+        mviCore = MviCore(
             config = config,
             initialIntents = initialIntents,
             viewModelScope = viewModelScope,
             mviModelClass = thisRef::class,
             process = process,
         )
+    }
+
+    override fun getValue(
+        thisRef: MviModel<*, *>,
+        property: KProperty<*>,
+    ): MviCore<INTENT> {
+        if (!::mviCore.isInitialized) {
+            initMviCore(thisRef)
+        }
+        return mviCore
     }
 }
 

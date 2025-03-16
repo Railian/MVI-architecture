@@ -1,6 +1,5 @@
 package ua.railian.mvi.config
 
-import ua.railian.mvi.MviModel
 import ua.railian.mvi.log.Category
 import ua.railian.mvi.log.KMLogging
 import ua.railian.mvi.log.Level
@@ -9,7 +8,7 @@ import ua.railian.mvi.pipeline.PipelineId
 import kotlin.reflect.KClass
 
 public object LoggerMviConfigDefaults : LoggerMviConfig {
-    override val tag: KClass<*>.() -> String? = { this::class.simpleName }
+    override val tag: KClass<*>.() -> String? = { this.simpleName }
     override val level: Level = Level.Verbose
     override val categories: Set<Category> = Category.entries.toSet()
     override val filter: (pipelineId: PipelineId) -> Boolean = { true }
